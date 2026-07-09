@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Методика | Көп жауапты тест</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #f6f8fb;
+      color: #111827;
+      line-height: 1.55;
+    }
+
+    .container {
+      width: min(1120px, 94%);
+      margin: 0 auto;
+      padding: 24px 0 70px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #1d4ed8, #2563eb, #0f766e);
+      color: #ffffff;
+      border-radius: 26px;
+      padding: 34px 24px;
+      margin-bottom: 22px;
+      box-shadow: 0 16px 38px rgba(37, 99, 235, 0.22);
+    }
+
+    .hero h1 {
+      font-size: clamp(30px, 5vw, 52px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      font-size: 18px;
+      opacity: 0.96;
+    }
+
+    .info-box {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 22px;
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+    }
+
+    .info-box strong {
+      color: #1d4ed8;
+    }
+
+    .test-panel {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 22px;
+      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+    }
+
+    .test-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 18px;
+      margin-bottom: 18px;
+    }
+
+    .test-header h2 {
+      font-size: 27px;
+      color: #0f172a;
+    }
+
+    .test-header p {
+      color: #475569;
+      font-weight: 700;
+    }
+
+    .badge {
+      background: #dbeafe;
+      color: #1d4ed8;
+      padding: 9px 15px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .question {
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 15px;
+    }
+
+    .question-title {
+      font-weight: 850;
+      color: #0f172a;
+      margin-bottom: 13px;
+      font-size: 17px;
+    }
+
+    .multi-note {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #0369a1;
+      background: #e0f2fe;
+      padding: 5px 9px;
+      border-radius: 999px;
+    }
+
+    .options {
+      display: grid;
+      gap: 9px;
+      margin-top: 12px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid #dbe3ee;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: 0.15s ease;
+    }
+
+    .option:hover {
+      background: #eff6ff;
+      border-color: #93c5fd;
+    }
+
+    .option input {
+      margin-top: 4px;
+      accent-color: #2563eb;
+      transform: scale(1.08);
+    }
+
+    .option.correct {
+      background: #dcfce7;
+      border-color: #16a34a;
+      color: #14532d;
+      font-weight: 800;
+    }
+
+    .option.wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #7f1d1d;
+      font-weight: 800;
+    }
+
+    .answer-box {
+      display: none;
+      margin-top: 13px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #f8fafc;
+      border-left: 5px solid #2563eb;
+    }
+
+    .answer-box.show {
+      display: block;
+    }
+
+    .answer-box strong {
+      color: #1d4ed8;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 22px;
+    }
+
+    .btn {
+      border: 0;
+      cursor: pointer;
+      border-radius: 16px;
+      padding: 14px 20px;
+      font-size: 16px;
+      font-weight: 900;
+      transition: 0.18s ease;
+    }
+
+    .btn-primary {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
+
+    .result-box {
+      display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 18px;
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      color: #14532d;
+      font-size: 21px;
+      font-weight: 900;
+    }
+
+    .result-box.show {
+      display: block;
+    }
+
+    @media (max-width: 560px) {
+      .container {
+        width: 95%;
+        padding-top: 16px;
+      }
+
+      .hero {
+        padding: 26px 18px;
+        border-radius: 22px;
+      }
+
+      .test-panel {
+        padding: 15px;
+      }
+
+      .question {
+        padding: 15px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="container">
+    <section class="hero">
+      <h1>Методика</h1>
+      <p>20 сұрақ | Бір немесе бірнеше дұрыс жауап</p>
+    </section>
+
+    <section class="info-box">
+      <p><strong>Нұсқаулық:</strong> дұрыс жауап біреу болса — біреуін белгілеңіз. Дұрыс жауап бірнешеу болса — бірнеше жауапты белгілеңіз.</p>
+    </section>
+
+    <section class="test-panel">
+      <div class="test-header">
+        <div>
+          <h2>1-нұсқа</h2>
+          <p>Көп жауапты тест</p>
+        </div>
+        <div class="badge">20 сұрақ</div>
+      </div>
+
+      <div id="questions"></div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="showResult()">Нәтижені көрсету</button>
+        <button class="btn btn-secondary" onclick="resetTest()">Қайта тапсыру</button>
+      </div>
+
+      <div class="result-box" id="resultBox"></div>
+    </section>
+  </main>
+
+  <script>
+    const questions = [
+            {
+        text: "Жасуша бөлінуінің негізгі кезеңдерін белгілеңіз.",
+        multi: true,
+        options: [
+          "Профаза",
+          "Метафаза",
+          "Анафаза",
+          "Телофаза",
+          "Интерфаза"
+        ],
+        correct: [0, 1, 2, 3],
+        explanation: "Митоздың негізгі фазалары: профаза, метафаза, анафаза және телофаза. Интерфаза — бөлінуге дайындық кезеңі."
+      },
+      {
+        text: "Интерфаза кезеңіне тән үдерістерді белгілеңіз.",
+        multi: true,
+        options: [
+          "ДНҚ екі еселенеді",
+          "Жасуша өседі",
+          "Органоидтар саны артады",
+          "Хромосомалар жасуша экваторына жиналады",
+          "Хроматидалар полюстерге ажырайды"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Интерфазада жасуша өседі, ДНҚ екі еселенеді және бөлінуге дайындық жүреді."
+      },
+      {
+        text: "Микоризаға тән белгілерді таңдаңыз.",
+        multi: true,
+        options: [
+          "Саңырауқұлақ пен өсімдік тамырының селбесуі",
+          "Өсімдіктің минералды заттарды сіңіруін жақсартады",
+          "Тамыр жүйесімен байланысты болады",
+          "Тек жануарларда кездеседі",
+          "Қан айналым жүйесінің бөлігі"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Микориза — саңырауқұлақ пен өсімдік тамыры арасындағы селбесу."
+      },
+      {
+        text: "Жүрек қабығына қатысты дұрыс жауаптарды белгілеңіз.",
+        multi: true,
+        options: [
+          "Перикард деп аталады",
+          "Жүректі сыртынан қаптайды",
+          "Қорғаныш қызметін атқарады",
+          "Нефронның бөлігі",
+          "Өкпе көпіршігі"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Жүрек қабығы перикард деп аталады және жүректі сыртынан қорғайды."
+      },
+      {
+        text: "Қанның формалы элементтерін белгілеңіз.",
+        multi: true,
+        options: [
+          "Эритроциттер",
+          "Лейкоциттер",
+          "Тромбоциттер",
+          "Плазма",
+          "Лимфа"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Қанның формалы элементтері: эритроциттер, лейкоциттер және тромбоциттер."
+      },
+      {
+        text: "Эритроциттерге тән белгілерді таңдаңыз.",
+        multi: true,
+        options: [
+          "Құрамында гемоглобин болады",
+          "Оттекті тасымалдайды",
+          "Қанның қызыл түсін береді",
+          "Антидене түзеді",
+          "Қан ұюына тікелей қатысады"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Эритроциттер гемоглобин арқылы оттекті тасымалдайды және қанға қызыл түс береді."
+      },
+      {
+        text: "Лейкоциттердің қызметтерін белгілеңіз.",
+        multi: true,
+        options: [
+          "Ағзаны қорғайды",
+          "Иммундық жауапқа қатысады",
+          "Микроағзаларды жоюға қатысады",
+          "Оттекті тасымалдайды",
+          "Фотосинтез жүргізеді"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Лейкоциттер ағзаның қорғаныш және иммундық қызметіне қатысады."
+      },
+      {
+        text: "Фотосинтездің жарық кезеңіне тән үдерістерді белгілеңіз.",
+        multi: true,
+        options: [
+          "АТФ түзіледі",
+          "Су фотолизге ұшырайды",
+          "Оттек бөлінеді",
+          "Кальвин циклі жүреді",
+          "Көмірқышқыл газы толық фиксацияланады"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Жарық кезеңінде су ыдырайды, оттек бөлінеді және АТФ түзіледі."
+      },
+      {
+        text: "Фотосинтездің қараңғы кезеңіне тән белгілерді таңдаңыз.",
+        multi: true,
+        options: [
+          "Кальвин циклі жүреді",
+          "Көмірқышқыл газы фиксацияланады",
+          "Органикалық заттар түзіледі",
+          "Су фотолизі жүреді",
+          "Оттек тікелей бөлінеді"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Қараңғы кезеңде көмірқышқыл газы фиксацияланып, органикалық заттар түзіледі."
+      },
+      {
+        text: "Хлоропластқа тән құрылымдарды белгілеңіз.",
+        multi: true,
+        options: [
+          "Строма",
+          "Тилакоид",
+          "Грана",
+          "Криста",
+          "Лизосома"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Хлоропласт құрамында строма, тилакоид және грана болады."
+      },
+      {
+        text: "Митохондрияға тән белгілерді таңдаңыз.",
+        multi: true,
+        options: [
+          "АТФ синтездейді",
+          "Қос мембраналы органоид",
+          "Криста түзеді",
+          "Хлорофилл сақтайды",
+          "Фотосинтездің негізгі орны"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Митохондрия — қос мембраналы органоид, кристалары бар және АТФ синтездейді."
+      },
+      {
+        text: "Рибосомаға тән белгілерді белгілеңіз.",
+        multi: true,
+        options: [
+          "Нәруыз синтезіне қатысады",
+          "Мембранасыз органоид",
+          "Екі суббірліктен тұрады",
+          "ДНҚ-ны сақтайтын негізгі орын",
+          "Фотосинтез жүргізеді"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Рибосома мембранасыз, екі суббірліктен тұрады және нәруыз синтезіне қатысады."
+      },
+      {
+        text: "Нәруыз биосинтезінің кезеңдерін белгілеңіз.",
+        multi: true,
+        options: [
+          "Инициация",
+          "Элонгация",
+          "Терминация",
+          "Денатурация",
+          "Ренатурация"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Нәруыз биосинтезінің негізгі кезеңдері: инициация, элонгация, терминация."
+      },
+      {
+        text: "ДНҚ құрамына кіретін азотты негіздерді таңдаңыз.",
+        multi: true,
+        options: [
+          "Аденин",
+          "Тимин",
+          "Гуанин",
+          "Цитозин",
+          "Урацил"
+        ],
+        correct: [0, 1, 2, 3],
+        explanation: "ДНҚ құрамына аденин, тимин, гуанин және цитозин кіреді. Урацил РНҚ-ға тән."
+      },
+      {
+        text: "РНҚ құрамына кіретін азотты негіздерді белгілеңіз.",
+        multi: true,
+        options: [
+          "Аденин",
+          "Урацил",
+          "Гуанин",
+          "Цитозин",
+          "Тимин"
+        ],
+        correct: [0, 1, 2, 3],
+        explanation: "РНҚ құрамында аденин, урацил, гуанин және цитозин болады."
+      },
+      {
+        text: "Прокариот жасушасына тән белгілерді таңдаңыз.",
+        multi: true,
+        options: [
+          "Нағыз ядросы болмайды",
+          "Мембраналы органоидтары болмайды",
+          "ДНҚ нуклеоид аймағында орналасады",
+          "Митохондриясы болады",
+          "Хлоропласттары міндетті түрде болады"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Прокариоттарда нағыз ядро және мембраналы органоидтар болмайды, ДНҚ нуклеоидта орналасады."
+      },
+      {
+        text: "Эукариот жасушасына тән белгілерді белгілеңіз.",
+        multi: true,
+        options: [
+          "Нағыз ядросы болады",
+          "Мембраналы органоидтары болады",
+          "Митохондрия болуы мүмкін",
+          "ДНҚ тек нуклеоидта орналасады",
+          "Ядро қабықшасы болмайды"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Эукариот жасушасында ядро және мембраналы органоидтар болады."
+      },
+      {
+        text: "Қан айналым жүйесінің бөліктерін таңдаңыз.",
+        multi: true,
+        options: [
+          "Жүрек",
+          "Артерия",
+          "Вена",
+          "Капилляр",
+          "Нефрон"
+        ],
+        correct: [0, 1, 2, 3],
+        explanation: "Қан айналым жүйесіне жүрек және қан тамырлары: артерия, вена, капилляр жатады."
+      },
+      {
+        text: "Зәр шығару жүйесінің мүшелерін белгілеңіз.",
+        multi: true,
+        options: [
+          "Бүйрек",
+          "Несепағар",
+          "Қуық",
+          "Несеп шығару өзегі",
+          "Кеңірдек"
+        ],
+        correct: [0, 1, 2, 3],
+        explanation: "Зәр шығару жүйесіне бүйрек, несепағар, қуық және несеп шығару өзегі жатады."
+      },
+      {
+        text: "Жүйке жүйесіне қатысты дұрыс жауаптарды белгілеңіз.",
+        multi: true,
+        options: [
+          "Нейрон негізгі құрылымдық бірлік",
+          "Жүйке импульсін өткізеді",
+          "Глия жасушалары нейрондарды қорғайды",
+          "Эритроциттер арқылы оттекті тасымалдайды",
+          "Өт бөледі"
+        ],
+        correct: [0, 1, 2],
+        explanation: "Жүйке жүйесінің негізгі жасушасы — нейрон, ал глия нейрондарды қорғайды және тірек қызметін атқарады."
+      }
+          ];
+
+    const questionsContainer = document.getElementById("questions");
+    const resultBox = document.getElementById("resultBox");
+
+    function renderQuestions() {
+      questionsContainer.innerHTML = questions.map((q, qIndex) => {
+        const note = q.correct.length > 1
+          ? `<span class="multi-note">Бірнеше дұрыс жауап бар</span>`
+          : `<span class="multi-note">Бір дұрыс жауап</span>`;
+
+        return `
+          <div class="question" data-question="${qIndex}">
+            <div class="question-title">
+              ${qIndex + 1}. ${q.text}
+              <br>
+              ${note}
+            </div>
+
+            <div class="options">
+              ${q.options.map((option, optIndex) => `
+                <label class="option" data-option="${optIndex}">
+                  <input type="checkbox" value="${optIndex}">
+                  <span>${String.fromCharCode(65 + optIndex)}) ${option}</span>
+                </label>
+              `).join("")}
+            </div>
+
+            <div class="answer-box">
+              <p>
+                <strong>Дұрыс жауап:</strong>
+                ${q.correct.map(i => `${String.fromCharCode(65 + i)}) ${q.options[i]}`).join("; ")}
+              </p>
+              <p><strong>Түсіндірме:</strong> ${q.explanation}</p>
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function arraysEqual(a, b) {
+      if (a.length !== b.length) return false;
+
+      const sortedA = [...a].sort((x, y) => x - y);
+      const sortedB = [...b].sort((x, y) => x - y);
+
+      return sortedA.every((value, index) => value === sortedB[index]);
+    }
+
+    function showResult() {
+      let score = 0;
+
+      questions.forEach((q, qIndex) => {
+        const questionEl = document.querySelector(`.question[data-question="${qIndex}"]`);
+        const checkedInputs = [...questionEl.querySelectorAll("input:checked")];
+        const selected = checkedInputs.map(input => Number(input.value));
+        const optionEls = questionEl.querySelectorAll(".option");
+
+        optionEls.forEach(option => {
+          option.classList.remove("correct", "wrong");
+        });
+
+        q.correct.forEach(correctIndex => {
+          optionEls[correctIndex].classList.add("correct");
+        });
+
+        selected.forEach(selectedIndex => {
+          if (!q.correct.includes(selectedIndex)) {
+            optionEls[selectedIndex].classList.add("wrong");
+          }
+        });
+
+        if (arraysEqual(selected, q.correct)) {
+          score++;
+        }
+
+        questionEl.querySelector(".answer-box").classList.add("show");
+      });
+
+      resultBox.classList.add("show");
+      resultBox.textContent = `Сіздің нәтижеңіз: ${score}/${questions.length}`;
+
+      resultBox.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }
+
+    function resetTest() {
+      document.querySelectorAll("input").forEach(input => {
+        input.checked = false;
+      });
+
+      document.querySelectorAll(".option").forEach(option => {
+        option.classList.remove("correct", "wrong");
+      });
+
+      document.querySelectorAll(".answer-box").forEach(box => {
+        box.classList.remove("show");
+      });
+
+      resultBox.classList.remove("show");
+      resultBox.textContent = "";
+
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    }
+
+    renderQuestions();
+  </script>
+</body>
+</html>
+      
